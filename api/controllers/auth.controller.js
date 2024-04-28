@@ -17,12 +17,12 @@ export const signUp = async (req, res, next) => {
 };
 
 export const signIn = async (req, res, next) => {
-  const {username, password} = req.body;
-  if (!username || !password) {
+  const {email, password} = req.body;
+  if (!email || !password) {
     next(errorHandler(400, "Please provide all required fields"))
   }
   try {
-    const user = await User.findOne({username});
+    const user = await User.findOne({email: email});
     if (!user) {
       return next(errorHandler(400, "Username or password is incorrect"));
     }
