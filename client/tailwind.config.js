@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import flowbite from "flowbite-react/tailwind"
 
-export default {
+module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
