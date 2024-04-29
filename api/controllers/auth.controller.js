@@ -41,10 +41,8 @@ export const signIn = async (req, res, next) => {
 }
 export const google = async (req, res, next) => {
   const {email, name, googlePhotoUrl} = req.body;
-  console.log(email, name, googlePhotoUrl);
   try {
     const user = await User.findOne({email});
-    console.log(user);
     if (!user) {
       // toString(36) generates a random string with numbers and lowercase letters of length 8
       const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
