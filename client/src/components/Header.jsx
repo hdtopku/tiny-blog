@@ -27,7 +27,9 @@ export default function Header() {
         {theme === 'light' ? <FaMoon/> : <FaSun/>}
       </Button>
       {currentUser ? (
-        <Dropdown arrowIcon={false} inline label={<Avatar alt='user' img={currentUser.profilePicture} rounded/>}>
+        <Dropdown arrowIcon={false} inline label={<Avatar img={() => (
+          <img className={'rounded-full w-8 h-8'} alt='user' referrerPolicy={'no-referrer'}
+               src={currentUser.profilePicture}/>)}/>}>
           <Dropdown.Header>
             <span className='text-sm block'>@{currentUser.username}</span>
             <span className='text-sm block font-medium truncate'>@{currentUser.email}</span>
