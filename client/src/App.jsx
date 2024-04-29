@@ -6,7 +6,7 @@ import SignIn from "./pages/SignIn.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Projects from "./pages/Projects.jsx";
 import Header from "./components/Header.jsx";
-import FooterCom from "./pages/FooterCom.jsx";
+import FooterCom from "./components/FooterCom.jsx";
 
 export default function App() {
   return (
