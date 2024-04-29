@@ -1,4 +1,3 @@
-import React from 'react'
 import {Footer} from 'flowbite-react'
 import {Link} from "react-router-dom";
 import {BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTwitter} from "react-icons/bs";
@@ -31,7 +30,7 @@ export default function FooterCom() {
           <div>
             <Footer.Title title="LEGAL"></Footer.Title>
             <Footer.LinkGroup col>
-              <Footer.Link>Privacy Policy</Footer.Link>
+              <Footer.Link href=''>Privacy Policy</Footer.Link>
               <Footer.Link href="#">Terms & Conditions</Footer.Link>
             </Footer.LinkGroup>
           </div>
