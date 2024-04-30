@@ -11,7 +11,6 @@ export const verifyToken = (req, res, next) => {
       return next(errorHandler(res, 401, 'Unauthorized'));
     }
     req.user = decoded;
-    console.log(decoded);
     next();
   })
 }

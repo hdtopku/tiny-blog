@@ -1,6 +1,19 @@
 import {errorHandler} from "../utils/error.js";
 import User from "../models/user.model.js";
 
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.userId) {
+    return next(errorHandler(403, "You are not allowed to delete this user"))
+  }
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.userId)
+    res.status(200).json({message: "User deleted successfully", data: deletedUser, success: true})
+  } catch (err) {
+    return next(errorHandler(500, "Something went wrong: " + err))
+  }
+}
+
+
 export const test = (req, res) => {
   res.json({message: "API is working"})
 }
