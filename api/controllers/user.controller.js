@@ -33,7 +33,7 @@ export const updateUser = async (req, res, next) => {
       }
     }, {new: true})
     const {password, ...userWithoutPassword} = updatedUser._doc
-    res.status(200).json(userWithoutPassword)
+    res.status(200).json({message: "User updated successfully", data: userWithoutPassword, success: true})
   } catch (err) {
     return next(errorHandler(500, "Something went wrong: " + err))
   }
