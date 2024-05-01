@@ -30,7 +30,7 @@ export const signIn = async (req, res, next) => {
     if (!isMatch) {
       return next(errorHandler(400, "Username or password is incorrect"));
     }
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET_KEY);
     const {password: pass, ...withoutPass} = user._doc
     return res.status(200).cookie('access_token', token, {
       httpOnly: true
@@ -52,13 +52,13 @@ export const google = async (req, res, next) => {
         username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-4),
         email, password: hashedPassword, profilePicture: googlePhotoUrl
       });
-      const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET_KEY)
+      const token = jwt.sign({id: newUser._id, isAdmin: newUser.isAdmin}, process.env.JWT_SECRET_KEY)
       const {password: pass, ...withoutPass} = newUser._doc
       return res.status(200).cookie('access_token', token, {
         httpOnly: true
       }).json({success: true, message: 'Sign in successfully', data: withoutPass});
     } else {
-      const token = jwt.sign({id: user._id}, process.env.JWT_SECRET_KEY);
+      const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET_KEY);
       const {password: pass, ...withoutPass} = user._doc
       return res.status(200).cookie('access_token', token, {
         httpOnly: true
