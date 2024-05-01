@@ -51,3 +51,11 @@ export const updateUser = async (req, res, next) => {
     return next(errorHandler(500, "Something went wrong: " + err))
   }
 }
+
+export const signOut = (req, res, next) => {
+  try {
+    res.clearCookie('access_token').status(200).json({message: "User signed out successfully", success: true})
+  } catch (err) {
+    return next(errorHandler(500, "Something went wrong: " + err))
+  }
+}
