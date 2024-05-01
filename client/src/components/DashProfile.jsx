@@ -16,9 +16,10 @@ import {
   updateSuccess
 } from "../redux/user/userSlice.js";
 import {HiOutlineExclamationCircle} from "react-icons/hi";
+import {Link} from "react-router-dom";
 
 export default function DashProfile() {
-  const {currentUser, error} = useSelector(state => state.user)
+  const {currentUser, error, loading} = useSelector(state => state.user)
   const [imageFile, setImageFile] = useState(null)
   const [imageFileUrl, setImageFileUrl] = useState(null)
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null)
@@ -35,37 +36,42 @@ export default function DashProfile() {
     if (file) {
       setImageFile(file)
       setImageFileUrl(URL.createObjectURL(file))
+      // if (imageFile) {
+      //   uploadImage(imageFile)
+      // }
     }
   }
+
   useEffect(() => {
+    const uploadImage = async () => {
+      const storage = getStorage(app)
+      const fileName = new Date().getTime() + imageFile.name
+      const storageRef = ref(storage, fileName)
+      const uploadTask = uploadBytesResumable(storageRef, imageFile)
+      setImageFileUploading(true)
+      uploadTask.on('state_changed', (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        setImageFileUploadProgress(progress.toFixed(0))
+      }, () => {
+        setImageUploadError('Could not upload image (file) must be less than 2MB')
+        setImageFileUploadProgress(null)
+        setImageFileUrl(null)
+        setImageFileUploadProgress(null)
+        setImageFileUploading(false)
+      }, () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          setImageFileUrl(url)
+          setImageFileUploadProgress(null)
+          setFormData({...formData, profilePicture: url})
+          setImageFileUploading(false)
+        })
+      })
+    }
     if (imageFile) {
       uploadImage(imageFile)
     }
-  }, [imageFile])
-  const uploadImage = async () => {
-    const storage = getStorage(app)
-    const fileName = new Date().getTime() + imageFile.name
-    const storageRef = ref(storage, fileName)
-    const uploadTask = uploadBytesResumable(storageRef, imageFile)
-    setImageFileUploading(true)
-    uploadTask.on('state_changed', (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-      setImageFileUploadProgress(progress.toFixed(0))
-    }, () => {
-      setImageUploadError('Could not upload image (file) must be less than 2MB')
-      setImageFileUploadProgress(null)
-      setImageFileUrl(null)
-      setImageFileUploadProgress(null)
-      setImageFileUploading(false)
-    }, () => {
-      getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-        setImageFileUrl(url)
-        setImageFileUploadProgress(null)
-        setFormData({...formData, profilePicture: url})
-        setImageFileUploading(false)
-      })
-    })
-  }
+  }, [imageFile])// eslint-disable-line react-hooks/exhaustive-deps
+
   const handleChange = (e) => {
     setFormData({...formData, [e.target.id]: e.target.value})
   }
@@ -162,7 +168,14 @@ export default function DashProfile() {
                  defaultValue={currentUser.username}/>
       <TextInput onChange={handleChange} type='text' id='email' placeholder='email' defaultValue={currentUser.email}/>
       <TextInput onChange={handleChange} type='text' id='password' placeholder='password'/>
-      <Button type='submit' gradientDuoTone='purpleToBlue' outline>Update</Button>
+      <Button type='submit' gradientDuoTone='purpleToBlue' outline disabled={loading || imageFileUploading}>
+        {loading ? 'Loading...' : 'Update'}
+      </Button>
+      {currentUser.isAdmin &&
+        <Link toFixed to={'/create-post'}>
+          <Button type='button' gradientDuoTone='purpleToPink' className='w-full'>Create a Post</Button>
+        </Link>
+      }
     </form>
     <div className='text-red-500 flex justify-between mt-5'>
       <span onClick={() => setShowModal(true)} className='cursor-pointer'>Delete Account</span>
