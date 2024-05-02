@@ -1,11 +1,12 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Button, Spinner} from "flowbite-react";
+import CallToAction from "../components/CallToAction";
 
 export default function PostPage() {
   const {postSlug} = useParams();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const [post, setPost] = useState(null);
   useEffect(() => {
     const fetchPost = async () => {
@@ -17,7 +18,6 @@ export default function PostPage() {
           return
         }
         const data = await response.json();
-        console.log(data);
         setPost(data.posts[0]);
         setLoading(false);
         setError(null);
@@ -45,6 +45,9 @@ export default function PostPage() {
     </div>
     <div dangerouslySetInnerHTML={{__html: post && post.content}}
          className={'max-w-2xl p-3 mx-auto w-full post-content'}>
+    </div>
+    <div className={'max-w-4xl mx-auto w-full'}>
+      <CallToAction/>
     </div>
   </div>
 }
