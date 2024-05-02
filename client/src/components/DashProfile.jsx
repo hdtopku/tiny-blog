@@ -123,7 +123,6 @@ export default function DashProfile() {
       }
     } catch (error) {
       dispatch(deleteUserFailure(error.message))
-      console.log(error)
     }
   }
   const handleSignOut = async () => {
