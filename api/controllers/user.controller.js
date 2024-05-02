@@ -59,3 +59,37 @@ export const signOut = (req, res, next) => {
     return next(errorHandler(500, "Something went wrong: " + err))
   }
 }
+
+export const getUsers = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, "You are not authorized to access this resource"))
+  }
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0
+    const limit = parseInt(req.query.limit) || 9
+    const sortDirection = req.query.sort === 'asc' ? 1 : -1
+    console.log('abc');
+    const users = await User.find().sort({createdAt: sortDirection}).skip(startIndex).limit(limit)
+    console.log('def');
+    const usersWithoutPassword = users.map(user => {
+      const {password, ...userWithoutPassword} = user._doc
+      return userWithoutPassword
+    })
+    console.log('ghi');
+    const totalUsers = await User.countDocuments()
+    const now = new Date()
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate(),
+    )
+    const lastMonthUsers = await User.countDocuments({createdAt: {$gte: oneMonthAgo}})
+    res.status(200).json({
+      message: "Users retrieved successfully",
+      data: {users: usersWithoutPassword, totalUsers, lastMonthUsers},
+      success: true
+    })
+  } catch (err) {
+    return next(errorHandler(500, "Something went wrong: " + err))
+  }
+}
