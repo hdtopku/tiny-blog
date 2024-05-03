@@ -44,3 +44,20 @@ export const likeComment = async (req, res, next) => {
     return next(errorHandler(500, "Internal Server Error: " + error));
   }
 }
+
+export const editComment = async (req, res, next) => {
+  try {
+    const {content} = req.body;
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      return next(errorHandler(404, "Comment not found"));
+    }
+    if (comment.userId.toString() !== req.user.id.toString() && !req.user.isAdmin) {
+      return next(errorHandler(403, "You are not allowed to edit this comment."));
+    }
+    const editedComment = await Comment.findByIdAndUpdate(req.params.commentId, {content}, {new: true});
+    res.status(200).json(editedComment);
+  } catch (error) {
+    return next(errorHandler(500, "Internal Server Error: " + error));
+  }
+}

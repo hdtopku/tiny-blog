@@ -44,7 +44,7 @@ export default function CommentSection({postId}) {
         navigate('/sign-in')
         return
       }
-      const res = await fetch(`/api/comment/like/${commentId}`, {
+      const res = await fetch(`/api/comment/likeComment/${commentId}`, {
         method: 'PUT',
       })
       if (res.ok) {
@@ -54,6 +54,9 @@ export default function CommentSection({postId}) {
     } catch (err) {
       console.log(err)
     }
+  }
+  const handleEdit = (comment, editedComment) => {
+    setComments(comments.map(c => c._id === comment._id ? {...c, content: editedComment} : c))
   }
   useEffect(() => {
     const getComments = async () => {
@@ -105,7 +108,8 @@ export default function CommentSection({postId}) {
             </div>
           </div>
           {comments.map(comment => (
-            <Comment onLike={handleLike} key={comment._id} comment={comment} currentUser={currentUser} postId={postId}/>
+            <Comment onEdit={handleEdit} onLike={handleLike} key={comment._id} comment={comment}
+                     currentUser={currentUser} postId={postId}/>
           ))}
         </>}
 
