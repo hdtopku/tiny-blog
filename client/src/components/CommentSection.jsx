@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {Link, useNavigate} from "react-router-dom";
-import {Alert, Button, Textarea} from "flowbite-react";
+import {Alert, Button, Modal, Textarea} from "flowbite-react";
 import {useEffect, useState} from "react";
 import Comment from "./Comment.jsx";
 
@@ -11,6 +11,8 @@ export default function CommentSection({postId}) {
   const [comment, setComment] = useState('')
   const [commentError, setCommentError] = useState(null)
   const [comments, setComments] = useState([])
+  const [showModal, setShowModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null)
   const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -57,6 +59,23 @@ export default function CommentSection({postId}) {
   }
   const handleEdit = (comment, editedComment) => {
     setComments(comments.map(c => c._id === comment._id ? {...c, content: editedComment} : c))
+  }
+  const handleDelete = async () => {
+    try {
+      if (!currentUser) {
+        navigate('/sign-in');
+        return;
+      }
+      const res = await fetch(`/api/comment/deleteComment/${commentToDelete}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        setComments(comments.filter(c => c._id !== commentToDelete))
+        setShowModal(false)
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
   useEffect(() => {
     const getComments = async () => {
@@ -108,11 +127,24 @@ export default function CommentSection({postId}) {
             </div>
           </div>
           {comments.map(comment => (
-            <Comment onEdit={handleEdit} onLike={handleLike} key={comment._id} comment={comment}
-                     currentUser={currentUser} postId={postId}/>
+            <Comment onDelete={(commentId) => {
+              setShowModal(true)
+              setCommentToDelete(commentId);
+            }} onEdit={handleEdit} onLike={handleLike} key={comment._id}
+                     comment={comment}/>
           ))}
         </>}
-
+      <Modal show={showModal} onClose={() => setShowModal(false)} size={'md'}>
+        <Modal.Header>Are you sure you want to delete this comment?</Modal.Header>
+        <Modal.Body>
+          <div className={'flex flex-col items-center'}>
+            <div className={'flex gap-2'}>
+              <Button outline={true} color={'gray'} onClick={() => setShowModal(false)}>No, Cancel</Button>
+              <Button color={'failure'} onClick={() => handleDelete()}>Yes, delete</Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }

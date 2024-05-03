@@ -6,11 +6,12 @@ import {Button, Textarea} from 'flowbite-react'
 
 
 /* eslint-disable react/prop-types */
-export default function Comment({comment, onLike, onEdit}) {
+export default function Comment({comment, onLike, onEdit, onDelete}) {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false)
   const [editedContent, setEditedContent] = useState(comment.content)
   const currentUser = useSelector(state => state.user.currentUser)
+
   useEffect(() => {
     const getUser = async () => {
       const response = await fetch(`/api/user/${comment.userId}`);
@@ -67,20 +68,20 @@ export default function Comment({comment, onLike, onEdit}) {
         <p className={'text-gray-500 pb-2'}>{comment.content}</p>
         <div className={'flex items-center gap-2 text-xs border-t dark:border-gray-700 max-w-fit gap-2'}>
           <button onClick={() => onLike(comment._id)} type={'button'}
-                  className={`text-gray-400 hover:text-blue-500 ${comment?.likes?.includes(currentUser._id) && '!text-blue-500'}`}>
+                  className={`text-gray-400 hover:text-blue-500 ${comment?.likes?.includes(currentUser?._id) && '!text-blue-500'}`}>
             <FaThumbsUp className={'test-sm'}/>
           </button>
           <p className={'text-gray-400'}>
             {comment.numberOfLikes && comment.numberOfLikes + ' ' + (comment.numberOfLikes === 1 ? 'like' : 'likes')}
           </p>
-          {currentUser && (currentUser._id === comment.userId || currentUser.role === 'admin') && (
+          {currentUser && (currentUser?._id === comment.userId || currentUser?.role === 'admin') && (
             <div className={'flex gap-2'}>
               <button type={'button'} className={'text-gray-400 hover:text-blue-500'}
                       onClick={handleEdit}>
                 Edit
               </button>
               <button type={'button'} className={'text-gray-400 hover:text-red-500'}
-                      onClick={() => console.log('delete comment')}>
+                      onClick={() => onDelete(comment._id)}>
                 Delete
               </button>
             </div>)}
