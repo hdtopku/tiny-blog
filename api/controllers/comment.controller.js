@@ -13,3 +13,14 @@ export const createComment = async (req, res, next) => {
     res.status(500).json({message: "Internal Server Error: " + error});
   }
 };
+
+export const getPostComments = async (req, res, next) => {
+  try {
+    const comments = await Comment.find({postId: req.params.postId}).sort({
+      createdAt: -1
+    })
+    res.status(200).json(comments);
+  } catch (error) {
+    return next(errorHandler(500, "Internal Server Error: " + error));
+  }
+}
