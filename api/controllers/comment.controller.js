@@ -24,3 +24,23 @@ export const getPostComments = async (req, res, next) => {
     return next(errorHandler(500, "Internal Server Error: " + error));
   }
 }
+export const likeComment = async (req, res, next) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) {
+      return next(errorHandler(404, "Comment not found"));
+    }
+    const userIndex = comment.likes.findIndex(user => user.toString() === req.user.id.toString());
+    if (userIndex >= 0) {
+      comment.likes.splice(userIndex, 1);
+      comment.numberOfLikes--;
+    } else {
+      comment.likes.push(req.user.id);
+      comment.numberOfLikes++;
+    }
+    await comment.save();
+    res.status(200).json(comment);
+  } catch (error) {
+    return next(errorHandler(500, "Internal Server Error: " + error));
+  }
+}
