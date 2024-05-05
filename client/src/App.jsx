@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import UpdatePost from "./pages/UpdatePost.jsx";
 import PostPage from "./pages/PostPage.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import Search from "./pages/Search";
 
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
         </Route>
         <Route path="/projects" element={<Projects/>}/>
         <Route path="/post/:postSlug" element={<PostPage/>}/>
+        <Route path="/search" element={<Search/>}/>
       </Routes>
       <FooterCom/>
     </BrowserRouter>
