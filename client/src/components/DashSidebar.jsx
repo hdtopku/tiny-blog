@@ -1,5 +1,5 @@
 import {Sidebar} from 'flowbite-react'
-import {HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser} from "react-icons/hi";
+import {HiAnnotation, HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser} from "react-icons/hi";
 import {Link, useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {signOutFailure, signOutSuccess} from "../redux/user/userSlice.js";
@@ -46,30 +46,41 @@ export default function DashSidebar() {
             </Sidebar.Item>
           </Link>
           {currentUser.isAdmin &&
-            <Link to='/dashboard?tab=posts'>
-              <Sidebar.Item
-                active={tab === 'posts'}
-                icon={HiDocumentText}
-                labelColor='dark'
-                as='div'
-              >
-                Posts
-              </Sidebar.Item>
-            </Link>
+            (
+              <>
+                <Link to='/dashboard?tab=posts'>
+                  <Sidebar.Item
+                    active={tab === 'posts'}
+                    icon={HiDocumentText}
+                    labelColor='dark'
+                    as='div'
+                  >
+                    Posts
+                  </Sidebar.Item>
+                </Link>
+                <Link to='/dashboard?tab=users'>
+                  <Sidebar.Item
+                    active={tab === 'users'}
+                    icon={HiOutlineUserGroup}
+                    labelColor='dark'
+                    as='div'
+                  >
+                    Users
+                  </Sidebar.Item>
+                </Link>
+                <Link to='/dashboard?tab=comments'>
+                  <Sidebar.Item
+                    active={tab === 'comments'}
+                    icon={HiAnnotation}
+                    labelColor='dark'
+                    as='div'
+                  >
+                    Comments
+                  </Sidebar.Item>
+                </Link></>
+            )
           }
-          {currentUser.isAdmin &&
-            <Link to='/dashboard?tab=users'>
-              <Sidebar.Item
-                active={tab === 'users'}
-                icon={HiOutlineUserGroup}
-                labelColor='dark'
-                as='div'
-              >
-                Users
-              </Sidebar.Item>
-            </Link>
-          }
-          <Sidebar.Item onClick={handleSignOut} active icon={HiArrowSmRight} className={'cursor-pointer'}>
+          < Sidebar.Item onClick={handleSignOut} active icon={HiArrowSmRight} className={'cursor-pointer'}>
             Sign Out
           </Sidebar.Item>
         </Sidebar.ItemGroup>

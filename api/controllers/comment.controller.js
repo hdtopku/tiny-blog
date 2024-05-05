@@ -77,3 +77,23 @@ export const deleteComment = async (req, res, next) => {
     return next(errorHandler(500, "Internal Server Error: " + error));
   }
 }
+
+export const getComments = async (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, "You are not authorized to access this resource."));
+  }
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortDirection = parseInt(req.query.sort) === 'desc' ? -1 : 1;
+    const comments = await Comment.find().skip(startIndex).limit(limit).sort({createdAt: sortDirection});
+    const totalCount = await Comment.countDocuments();
+    const now = new Date()
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+
+    const recentComments = await Comment.countDocuments({createdAt: {$gte: oneMonthAgo}})
+    res.status(200).json({comments, totalCount, recentComments});
+  } catch (error) {
+    return next(errorHandler(500, "Internal Server Error: " + error));
+  }
+}
