@@ -87,12 +87,12 @@ export const getComments = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const sortDirection = parseInt(req.query.sort) === 'desc' ? -1 : 1;
     const comments = await Comment.find().skip(startIndex).limit(limit).sort({createdAt: sortDirection});
-    const totalCount = await Comment.countDocuments();
+    const totalComments = await Comment.countDocuments();
     const now = new Date()
     const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
 
-    const recentComments = await Comment.countDocuments({createdAt: {$gte: oneMonthAgo}})
-    res.status(200).json({comments, totalCount, recentComments});
+    const lastMonthComments = await Comment.countDocuments({createdAt: {$gte: oneMonthAgo}})
+    res.status(200).json({comments, totalComments, lastMonthComments});
   } catch (error) {
     return next(errorHandler(500, "Internal Server Error: " + error));
   }
